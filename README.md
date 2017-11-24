@@ -110,6 +110,7 @@ return Mono.never()
 WebClient is the new interface that was introduced in Spring 5.
 It provides an impressive set of methods to create and send requests and to process the responses in both blocking and non-blocking ways.  
 
+### Blocking
 The simplest way is to wait (block) for the response and process it in the same thread that initiate the request:
 
 ```java
@@ -138,7 +139,8 @@ If the response is a collection (wrapped as Flux) we can block until all the ele
 ```
 This technique can lead to performance issues if the collection is large, and, of course, inapplicable if the collection represents an infinite stream.  
 
-Sometimes a better way is using the reactive, non-blocking, methods. In this case the elements of the response are processed as they flow in:
+### Non-Blocking
+A better way is using the reactive, non-blocking, methods. In this case the elements of the response are processed as they flow in:
 ```java
     WebClient client = WebClient.create("http://localhost:8080");
     Mono<String> mono = client.get()
@@ -200,6 +202,11 @@ A basic client for the controller above may be implemented as
         }
     }
 ```
+
+Note: the Javadoc of subscribe alerts us that "since the sequence can be asynchronous, this will immediately return control to the calling thread. This can give the impression the consumer is not invoked when executing in a main thread".
+You may have to make sure that the application does not exit before the response is processed.
+
+
 
 ---
 <a name="asyncresttemplate">1</a>: AsyncRestTemplate is now deprecated and replaced with the WebClient
